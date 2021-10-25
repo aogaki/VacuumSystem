@@ -4,6 +4,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/json.hpp>
+#include <influxdb.hpp>
 #include <memory>
 #include <mongocxx/client.hpp>
 #include <mongocxx/pool.hpp>
@@ -15,15 +16,28 @@ class TDataUploader
 {
  public:
   TDataUploader();
-  TDataUploader(std::string address);
+  // TDataUploader(std::string address);
   ~TDataUploader();
 
-  void SetServerAddress(std::string address);
+  // Make different claases?
+  void SetMongoDB(std::string address, std::string dbName,
+                  std::string collection);
+  void SetInfluxDB(std::string address, std::string dbName,
+                   std::string measurement);
 
   void UploadData(std::string sensorName, double pressure, long timeStamp);
 
  private:
-  std::unique_ptr<mongocxx::pool> fPool;
+  void EnableMongoDB() { fUseMongoDB = true; };
+  bool fUseMongoDB;
+  std::unique_ptr<mongocxx::pool> fMongoPool;
+  std::string fMongoDBName;
+  std::string fMongoCollection;
+
+  void EnableInfluxDN() { fUseInfluxDB = true; };
+  bool fUseInfluxDB;
+  influxdb_cpp::server_info fInfluxServer;
+  std::string fMeasurement;
 };
 
 #endif

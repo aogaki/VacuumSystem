@@ -1,0 +1,17 @@
+{
+  "useMongoDB": true,
+  "mongoAddress": "172.18.7.140",
+  "mongoName": "ELIADE",
+  "collection": "VacMon",
+
+  "useInfluxDB": true,
+  "influxAddress": "172.18.7.140",
+  "influxName": "vacuum_monitor",
+  "measurement": "pressure",
+
+  "deviceName": "/dev/ttyUSB0",
+  "timeInterval": 1,
+
+  "sensor1": true,
+  "sensor2": true
+}
