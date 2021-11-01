@@ -95,7 +95,8 @@ int main(int argc, char *argv[])
         uploader->UploadData("PR2", pressure2, now);
       }
 
-      last = now;
+      if (pressure1 != READ_SENSOR_ERROR && pressure2 != READ_SENSOR_ERROR)
+        last = now;
     }
 
     usleep(1000);

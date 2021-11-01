@@ -44,8 +44,12 @@ void TCommTPG::CloseDevice()
 void TCommTPG::Config()
 {
   using namespace LibSerial;
+  fSerialPort.SetCharacterSize(CharacterSize::CHAR_SIZE_8);
+  fSerialPort.SetFlowControl(FlowControl::FLOW_CONTROL_NONE);
+  fSerialPort.SetParity(Parity::PARITY_NONE);
+  fSerialPort.SetStopBits(StopBits::STOP_BITS_1);
 
-  for (auto i = 0; i < 5; i++) {
+  for (auto i = 0; i < 5; i++) {  // Try 5 times.
     // Blute force checking baud rate.  And set max speed
     std::array<LibSerial::BaudRate, 5> ratesList{
         LibSerial::BaudRate::BAUD_9600, LibSerial::BaudRate::BAUD_19200,
@@ -54,7 +58,7 @@ void TCommTPG::Config()
     auto commCheck = 0;
     for (unsigned int iRate = 0; iRate < ratesList.size(); iRate++) {
       fSerialPort.SetBaudRate(ratesList[iRate]);
-      auto ret = CommDevice("BAU,4");
+      auto ret = CommDevice("BAU,4");  // Sending command set to 115200 Baud
       commCheck += ret.size();
     }
 
@@ -72,10 +76,6 @@ void TCommTPG::Config()
   }
 
   fSerialPort.SetBaudRate(LibSerial::BaudRate::BAUD_115200);
-  fSerialPort.SetCharacterSize(CharacterSize::CHAR_SIZE_8);
-  fSerialPort.SetFlowControl(FlowControl::FLOW_CONTROL_NONE);
-  fSerialPort.SetParity(Parity::PARITY_NONE);
-  fSerialPort.SetStopBits(StopBits::STOP_BITS_1);
 
   std::cout << "Configure done" << std::endl;
 }
@@ -109,7 +109,7 @@ double TCommTPG::ReadSensor(int id)
 
 std::vector<std::string> TCommTPG::CommDevice(std::string cmd)
 {
-  constexpr size_t timeout = 25;  // in ms
+  constexpr size_t timeout = 50;  // in ms
 
   constexpr char ENQ = 0x05;
   constexpr char ACK = 0x06;
@@ -145,9 +145,9 @@ std::vector<std::string> TCommTPG::CommDevice(std::string cmd)
   } catch (const LibSerial::ReadTimeout &timeOut) {
     std::cerr << "Read Timeout" << std::endl;
     commFlag = false;
-
   } catch (const std::exception &e) {
     std::cerr << "Read problem by " << e.what() << std::endl;
+    commFlag = false;
   }
 
   if (commFlag == false) {
