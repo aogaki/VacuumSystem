@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
   if (useInfluxDB)
     uploader->SetInfluxDB(influxAddress, influxName, measurement);
 
-  auto last = time(nullptr);
+  time_t last = 0;
   while (true) {
     auto now = time(nullptr);
     if (now - last >= timeInterval) {
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         last = now;
     }
 
-    usleep(1000);
+    usleep(100000);
   }
 
   return 0;

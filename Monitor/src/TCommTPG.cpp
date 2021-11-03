@@ -160,7 +160,8 @@ std::vector<std::string> TCommTPG::CommDevice(std::string cmd)
   std::string retBuf;
   try {
     // I can not know the received size.
-    // 256 is enough big.  Expecting timeout.
+    // 256 is enough big.  Expecting timeout now.
+    // Expecting timeout can be the bug.
     fSerialPort.Read(retBuf, 256, timeout);
   } catch (const LibSerial::ReadTimeout &timeOut) {
     ;
